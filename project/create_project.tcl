@@ -1,12 +1,12 @@
-#
+
 # create_project.tcl  Tcl script for creating project
 #
 
 set project_directory       [file dirname [info script]]
 set project_name            "project"
-set device_parts            "xc7z010clg400-1"
+set device_part             "xc7z010clg400-1"
 set design_bd_tcl_file      [file join $project_directory "design_1_bd.tcl"  ]
-lappend constrs_file_list   [file join $script_directory  "design_1_pin.xdc" ]
+lappend constrs_file_list   [file join $project_directory "design_1_pin.xdc" ]
 lappend ip_repo_path_list   [file join $project_directory ".." "FPGA-SoC-Linux-Example-1-Base" "LED_AXI"   "target" "xilinx" "ip"]
 lappend ip_repo_path_list   [file join $project_directory ".." "FPGA-SoC-Linux-Example-1-Base" "PUMP_AXI4" "target" "xilinx" "ip"]
 #
