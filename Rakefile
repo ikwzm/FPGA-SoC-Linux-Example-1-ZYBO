@@ -55,7 +55,7 @@ task :uninstall do
   sh "dtbocfg.rb --remove #{DEVICE_TREE_DIRECTORY}"
 end
 
-file "/lib/firmware/#{FPGA_BITSTREAM_FILE}" do
+file "/lib/firmware/#{FPGA_BITSTREAM_FILE}" => ["#{FPGA_BITSTREAM_FILE}"] do
   sh "cp #{FPGA_BITSTREAM_FILE} /lib/firmware/#{FPGA_BITSTREAM_FILE}"
 end
 
