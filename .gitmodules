@@ -1,0 +1,3 @@
+[submodule "FPGA-SoC-Linux-Example-1-Base"]
+	path = FPGA-SoC-Linux-Example-1-Base
+	url = https://github.com/ikwzm/FPGA-SoC-Linux-Example-1-Base

@@ -1,0 +1,26 @@
+#!/usr/bin/tclsh
+
+set app_name      "fsbl"
+set app_type      "zynq_fsbl"
+set hwspec_file   "design_1_wrapper.hdf"
+set proc_name     "ps7_cortexa9_0"
+
+if {[info exists project_name     ] == 0} {
+    set project_name        "project"
+}
+if {[info exists project_directory] == 0} {
+    set project_directory   [pwd]
+}
+if {[info exists sdk_workspace] == 0} {
+    set sdk_workspace       [file join $project_directory $project_name.sdk]
+}
+
+set app_dir        [file join $sdk_workspace $app_name]
+set app_elf_dir    [file join $sdk_workspace $app_name "Debug"]
+set hw_design      [open_hw_design  [file join $sdk_workspace $hwspec_file]]
+
+generate_app -hw $hw_design -os standalone -proc $proc_name -app $app_type -compile -dir $app_dir
+file mkdir $app_elf_dir
+file copy  [file join $app_dir "executable.elf"] [file join $app_elf_dir "fsbl.elf"]
+
+exit
