@@ -20,13 +20,13 @@
 			pump-udmabuf4 {
 				compatible  = "ikwzm,udmabuf-0.10.a";
 				device-name = "udmabuf4";
-				size = <0x01000000>;
+				size = <0x00100000>;
 	                };
 
 			pump-udmabuf5 {
 				compatible = "ikwzm,udmabuf-0.10.a";
 				device-name = "udmabuf5";
-				size = <0x01000000>;
+				size = <0x00100000>;
 			};
                 };
 	} ;
