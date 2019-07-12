@@ -19,7 +19,7 @@ shell# apt-get install python3-numpy
 ### Download FPGA-SoC-Linux-Example-1-ZYBO
 
 ```
-shell$ git clone FPGA-SoC-Linux-Example-1-ZYBO
+shell$ git clone https://github.com/ikwzm/FPGA-SoC-Linux-Example-1-ZYBO
 shell$ cd FPGA-SoC-Linux-Example-1-ZYBO
 ```
 
