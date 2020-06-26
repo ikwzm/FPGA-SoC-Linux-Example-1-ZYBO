@@ -19,7 +19,7 @@
 				insert-rate   = "100000000";
 				insert-enable = <1>;
 			};
-			pump-uio@43c10000 {
+			pump-uio {
 				compatible = "generic-uio";
 				reg = <0x43c10000 0x1000>;
 				interrupt-parent = <&intc>;
@@ -27,16 +27,16 @@
 	                };
 
 			pump-udmabuf4 {
-				compatible  = "ikwzm,udmabuf-0.10.a";
+				compatible  = "ikwzm,u-dma-buf";
 				device-name = "udmabuf4";
 				size = <0x00100000>;
 	                };
 
 			pump-udmabuf5 {
-				compatible = "ikwzm,udmabuf-0.10.a";
+				compatible = "ikwzm,u-dma-buf";
 				device-name = "udmabuf5";
 				size = <0x00100000>;
 			};
                 };
-	} ;
-} ;
+	};
+};

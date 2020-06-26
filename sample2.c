@@ -44,8 +44,8 @@ void main()
     int            check_size  = 0x1000;
     struct timeval start_time, end_time;
 
-    if ((uio_fd = open("/dev/uio0", O_RDWR)) == -1) {
-        printf("Can not open /dev/uio0\n");
+    if ((uio_fd = uio_open("pump-uio")) == -1) {
+        printf("Can not open pump-uio\n");
         exit(1);
     }
     regs = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, uio_fd, 0);

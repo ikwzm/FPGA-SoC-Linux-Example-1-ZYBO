@@ -3,6 +3,7 @@
 
 #include        <stdio.h>
 #include        <stdint.h>
+#include        <dirent.h>
 #include        <unistd.h>
 #include        <fcntl.h>
 #include        <string.h>
@@ -146,7 +147,7 @@ int udmabuf_open(struct udmabuf* udmabuf, const char* name)
     strcpy(udmabuf->name, name);
     udmabuf->file = -1;
 
-    sprintf(file_name, "/sys/class/udmabuf/%s/phys_addr", name);
+    sprintf(file_name, "/sys/class/u-dma-buf/%s/phys_addr", name);
     if ((fd  = open(file_name, O_RDONLY)) == -1) {
         printf("Can not open %s\n", file_name);
         return (-1);
@@ -155,7 +156,7 @@ int udmabuf_open(struct udmabuf* udmabuf, const char* name)
     sscanf(attr, "%x", &udmabuf->phys_addr);
     close(fd);
 
-    sprintf(file_name, "/sys/class/udmabuf/%s/size", name);
+    sprintf(file_name, "/sys/class/u-dma-buf/%s/size", name);
     if ((fd  = open(file_name, O_RDONLY)) == -1) {
         printf("Can not open %s\n", file_name);
         return (-1);
@@ -199,5 +200,46 @@ void print_diff_time(struct timeval start_time, struct timeval end_time)
     }
     printf("time = %ld.%06ld sec\n", diff_time.tv_sec, diff_time.tv_usec);
 }
+
+int uio_open(char* name)
+{
+    DIR*   dp;
+    char   temp_buf[1024];
+    dp = opendir("/sys/class/uio/");
+    if (dp != NULL) {
+        struct dirent* entry;
+        do {
+            entry = readdir(dp);
+            if (entry != NULL) {
+                FILE*   fd;
+                sprintf(temp_buf, "/sys/class/uio/%s/name", entry->d_name);
+                // printf("scan %s\n", temp_buf);
+                if ((fd = fopen(temp_buf, "r")) != NULL) {
+                    int     found = 0;
+                    int     i;
+                    if (fgets(temp_buf, sizeof(temp_buf), fd) != NULL) {
+                        // printf("read => %s\n", temp_buf);
+                        for(i = 0; i < sizeof(temp_buf); i++) {
+                            if ((name[i] == '\0') && ((temp_buf[i] == '\0' || temp_buf[i] == '\n'))) {
+                                found = 1;
+                                break;
+                            }
+                            if (name[i] != temp_buf[i]) 
+                                break;
+                        }
+                    }
+                    fclose(fd);
+                    if (found == 1) {
+                        sprintf(temp_buf, "/dev/%s", entry->d_name);
+                        // printf("found %s in %s\n", name, temp_buf);
+                        return open(temp_buf, O_RDWR);
+                    }
+                }
+            }
+        } while(entry != NULL);
+    }
+    return -1;
+}
+
 
 #endif
