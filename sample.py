@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 if __name__ == '__main__':
-    uio0       = Uio('uio0')
+    uio0       = Uio('pump-uio')
     pump       = Pump(uio0.regs())
     udmabuf4   = Udmabuf('udmabuf4')
     udmabuf5   = Udmabuf('udmabuf5')
