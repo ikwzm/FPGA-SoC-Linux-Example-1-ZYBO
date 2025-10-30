@@ -188,17 +188,19 @@ int udmabuf_close(struct udmabuf* udmabuf)
     return 0;
 }
 
-void print_diff_time(struct timeval start_time, struct timeval end_time)
+void print_diff_time(struct timespec start_time, struct timespec end_time)
 {
-    struct timeval diff_time;
-    if (end_time.tv_usec < start_time.tv_usec) {
+    struct timespec diff_time;
+    if (end_time.tv_nsec < start_time.tv_nsec) {
         diff_time.tv_sec  = end_time.tv_sec  - start_time.tv_sec  - 1;
-        diff_time.tv_usec = end_time.tv_usec - start_time.tv_usec + 1000*1000;
+        diff_time.tv_nsec = end_time.tv_nsec - start_time.tv_nsec + 1000*1000*1000;
     } else {
         diff_time.tv_sec  = end_time.tv_sec  - start_time.tv_sec ;
-        diff_time.tv_usec = end_time.tv_usec - start_time.tv_usec;
+        diff_time.tv_nsec = end_time.tv_nsec - start_time.tv_nsec;
     }
-    printf("time = %ld.%06ld sec\n", diff_time.tv_sec, diff_time.tv_usec);
+    double diff_msec = ((diff_time.tv_sec) +
+                        (diff_time.tv_nsec / (1000.0*1000.0*1000.0))) * 1000.0;
+    printf("elapsed_time = %.6f [msec]\n", diff_msec);
 }
 
 int uio_open(char* name)

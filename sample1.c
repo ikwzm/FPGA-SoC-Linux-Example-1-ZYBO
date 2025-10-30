@@ -24,13 +24,13 @@ int uio_wait_irq(int uio_fd)
 
 void main()
 {
-    int            uio_fd;
-    void*          regs;
-    struct udmabuf intake_buf;
-    struct udmabuf outlet_buf;
-    int            check_count = 10;
-    int            check_size  = 0x1000;
-    struct timeval start_time, end_time;
+    int             uio_fd;
+    void*           regs;
+    struct udmabuf  intake_buf;
+    struct udmabuf  outlet_buf;
+    int             check_count = 10;
+    int             check_size  = 0x1000;
+    struct timespec start_time, end_time;
 
     if ((uio_fd = uio_open("pump-uio")) == -1) {
         printf("Can not open pump-uio\n");
@@ -55,7 +55,7 @@ void main()
             ((unsigned char*)(outlet_buf.buf))[i] = 0;
         }
     
-        gettimeofday(&start_time, NULL);
+        clock_gettime(CLOCK_REALTIME, &start_time);
         pump_setup(regs, intake_buf.phys_addr, outlet_buf.phys_addr, check_size);
         uio_irq_on(uio_fd);
         pump_start(regs);
@@ -64,7 +64,7 @@ void main()
             break;
         }
         pump_clear_status(regs);
-        gettimeofday(&end_time  , NULL);
+        clock_gettime(CLOCK_REALTIME, &end_time);
         print_diff_time(start_time, end_time);
 
         error_count = 0;
