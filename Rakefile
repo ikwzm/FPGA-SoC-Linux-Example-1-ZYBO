@@ -1,6 +1,6 @@
 
 CC                     = "gcc"
-CFLAGS                 = ""
+CFLAGS                 = "-D_GNU_SOURCE"
 FPGA_BITSTREAM_FILE    = "pump_axi4.bin"
 DEVICE_TREE_NAME       = "uio_irq_sample"
 DEVICE_TREE_FILE       = "uio_irq_sample.dts"
