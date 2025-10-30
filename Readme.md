@@ -6,123 +6,124 @@ FPGA-SoC-Linux example(1) binary and project and test code for ZYBO
 ### Requirement
 
 * Board: ZYBO
-* OS: [FPGA-SoC-Linux](https://github.com/ikwzm/FPGA-SoC-Linux.git)
+* OS:
+   + ~~[FPGA-SoC-Linux](https://github.com/ikwzm/FPGA-SoC-Linux.git)~~
+   + [FPGA-SoC-Debian12](https://github.com/ikwzm/FPGA-SoC-Debian12.git)
+   + [FPGA-SoC-Debian13](https://github.com/ikwzm/FPGA-SoC-Debian13.git)
 
 ## Install
 
 ### Install python3-numpy
 
-```
+```console
 shell# apt-get install python3-numpy
 ```
 
 ### Download FPGA-SoC-Linux-Example-1-ZYBO
 
-```
+```console
 shell$ git clone https://github.com/ikwzm/FPGA-SoC-Linux-Example-1-ZYBO
 shell$ cd FPGA-SoC-Linux-Example-1-ZYBO
 ```
 
 ### Install to FPGA and Device Tree
 
-```
+```console
 shell# rake install
 cp pump_axi4.bin /lib/firmware/pump_axi4.bin
 dtbocfg.rb --install uio_irq_sample --dts uio_irq_sample.dts
 <stdin>:22.13-27.20: Warning (unit_address_vs_reg): /fragment@1/__overlay__/pump-uio: node has a reg or ranges property, but no unit name
-<stdin>:9.13-41.4: Warning (avoid_unnecessary_addr_size): /fragment@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-[  712.822208] fpga_manager fpga0: writing pump_axi4.bin to Xilinx Zynq FPGA Manager
-[  712.867038] OF: overlay: WARNING: memory leak will occur if overlay removed, property: /amba/fpga-region0/firmware-name
-[  712.881097] fclkcfg amba:fclk0: driver installed.
-[  712.885809] fclkcfg amba:fclk0: device name    : amba:fclk0
-[  712.891989] fclkcfg amba:fclk0: clock  name    : fclk0
-[  712.897132] fclkcfg amba:fclk0: clock  rate    : 100000000
-[  712.902684] fclkcfg amba:fclk0: clock  enabled : 1
-[  712.914833] u-dma-buf udmabuf4: driver version = 3.0.1
-[  712.924993] u-dma-buf udmabuf4: major number   = 242
-[  712.930088] u-dma-buf udmabuf4: minor number   = 0
-[  712.934879] u-dma-buf udmabuf4: phys address   = 0x1f100000
-[  712.940506] u-dma-buf udmabuf4: buffer size    = 1048576
-[  712.945814] u-dma-buf udmabuf4: dma device     = amba:pump-udmabuf4
-[  712.952119] u-dma-buf udmabuf4: dma coherent   = 1
-[  712.956908] u-dma-buf amba:pump-udmabuf4: driver installed.
-[  712.970810] u-dma-buf udmabuf5: driver version = 3.0.1
-[  712.975963] u-dma-buf udmabuf5: major number   = 242
-[  712.981042] u-dma-buf udmabuf5: minor number   = 1
-[  712.985830] u-dma-buf udmabuf5: phys address   = 0x1f200000
-[  712.991452] u-dma-buf udmabuf5: buffer size    = 1048576
-[  712.996757] u-dma-buf udmabuf5: dma device     = amba:pump-udmabuf5
-[  713.003061] u-dma-buf udmabuf5: dma coherent   = 1
-[  713.007850] u-dma-buf amba:pump-udmabuf5: driver installed.
+<stdin>:9.13-41.4: Warning (avoid_unnecessary_addr_size): /fragment@1: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+[ 1143.068664] fpga_manager fpga0: writing pump_axi4.bin to Xilinx Zynq FPGA Manager
+[ 1143.232954] OF: overlay: WARNING: memory leak will occur if overlay removed, property: /axi/fpga-region0/firmware-name
+[ 1143.299169] fclkcfg axi:fclk0: driver version : 1.9.0
+[ 1143.314873] fclkcfg axi:fclk0: device name    : axi:fclk0
+[ 1143.320385] fclkcfg axi:fclk0: clock  name    : fclk0
+[ 1143.331002] fclkcfg axi:fclk0: clock  rate    : 100000000
+[ 1143.336566] fclkcfg axi:fclk0: clock  enabled : 1
+[ 1143.341299] fclkcfg axi:fclk0: driver installed.
+[ 1143.366381] u-dma-buf udmabuf4: driver version = 5.3.0
+[ 1143.371573] u-dma-buf udmabuf4: major number   = 243
+[ 1143.380207] u-dma-buf udmabuf4: minor number   = 0
+[ 1143.385210] u-dma-buf udmabuf4: phys address   = 0x1f100000
+[ 1143.390816] u-dma-buf udmabuf4: buffer size    = 1048576
+[ 1143.404653] u-dma-buf axi:pump-udmabuf4: driver installed.
+[ 1143.417652] u-dma-buf udmabuf5: driver version = 5.3.0
+[ 1143.422860] u-dma-buf udmabuf5: major number   = 243
+[ 1143.427836] u-dma-buf udmabuf5: minor number   = 1
+[ 1143.432672] u-dma-buf udmabuf5: phys address   = 0x1f200000
+[ 1143.438253] u-dma-buf udmabuf5: buffer size    = 1048576
+[ 1143.443609] u-dma-buf axi:pump-udmabuf5: driver installed.
 ```
 
 ## Run sample1 or sample2
 
 ### Compile sample1 or sample2
 
-```
+```console
 shell# rake sample1 sample2
+gcc -D_GNU_SOURCE -o sample1 sample1.c
+gcc -D_GNU_SOURCE -o sample2 sample2.c
 ```
 
 ### Run sample1
 
-```
+```console
 shell# ./sample1
-time = 0.005702 sec
-time = 0.005685 sec
-time = 0.005668 sec
-time = 0.005681 sec
-time = 0.005690 sec
-time = 0.005677 sec
-time = 0.005698 sec
-time = 0.005707 sec
-time = 0.005662 sec
-time = 0.005692 sec
+elapsed_time = 5.758937 [msec]
+elapsed_time = 5.755854 [msec]
+elapsed_time = 5.756241 [msec]
+elapsed_time = 5.749429 [msec]
+elapsed_time = 5.755294 [msec]
+elapsed_time = 5.751010 [msec]
+elapsed_time = 5.704143 [msec]
+elapsed_time = 5.737004 [msec]
+elapsed_time = 5.763220 [msec]
+elapsed_time = 5.777380 [msec]
 ```
 
 ### Run sample2
 
-```
+```console
 shell$ ./sample2
-time = 0.005713 sec
-time = 0.005694 sec
-time = 0.005688 sec
-time = 0.005720 sec
-time = 0.005708 sec
-time = 0.005687 sec
-time = 0.005693 sec
-time = 0.005701 sec
-time = 0.005723 sec
-time = 0.005718 sec
+elapsed_time = 5.778912 [msec]
+elapsed_time = 5.769755 [msec]
+elapsed_time = 5.779885 [msec]
+elapsed_time = 5.759435 [msec]
+elapsed_time = 5.758414 [msec]
+elapsed_time = 5.772045 [msec]
+elapsed_time = 5.766845 [msec]
+elapsed_time = 5.764512 [msec]
+elapsed_time = 5.713613 [msec]
+elapsed_time = 5.776623 [msec]
 ```
 
 ## Run sample.py
 
-```
+```console
 shell# python3 sample.py
-elapsed_time:5.912[msec]
-elapsed_time:5.847[msec]
-elapsed_time:5.833[msec]
-elapsed_time:5.839[msec]
-elapsed_time:5.826[msec]
-elapsed_time:5.841[msec]
-elapsed_time:5.832[msec]
-elapsed_time:5.842[msec]
-elapsed_time:5.84[msec]
-average_time:5.846[msec]
-thougput    :179.374[MByte/sec]
+elapsed_time:6.027[msec]
+elapsed_time:5.909[msec]
+elapsed_time:5.863[msec]
+elapsed_time:5.837[msec]
+elapsed_time:5.843[msec]
+elapsed_time:5.87[msec]
+elapsed_time:5.834[msec]
+elapsed_time:5.863[msec]
+elapsed_time:5.852[msec]
+average_time:5.878[msec]
+thougput    :178.404[MByte/sec]
 udmabuf4 == udmabuf5 : OK
 ```
 
 ## Uninstall
 
-```
+```console
 shell# rake uninstall
 dtbocfg.rb --remove uio_irq_sample
-dtbocfg.rb --remove uio_irq_sample
-[  779.549516] u-dma-buf amba:pump-udmabuf5: driver removed.
-[  779.556223] u-dma-buf amba:pump-udmabuf4: driver removed.
-[  779.565252] fclkcfg amba:fclk0: driver unloaded
+[ 1155.739557] u-dma-buf axi:pump-udmabuf5: driver removed.
+[ 1155.745975] u-dma-buf axi:pump-udmabuf4: driver removed.
+[ 1155.755643] fclkcfg axi:fclk0: driver removed.
 ```
 
 
