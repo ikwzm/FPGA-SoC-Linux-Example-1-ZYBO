@@ -131,7 +131,7 @@ dtbocfg.rb --remove uio_irq_sample
 
 ### Requirement
 
-* Vivado 2016.1 or 2016.2 or 2016.2.1
+* Vivado 2016.1 or 2016.2 or 2016.2.1 or 2025.1
 
 ### Download FPGA-SoC-Linux-Example-1-Base
 
@@ -157,5 +157,5 @@ Vivado > Tools > Run Tcl Script > project/implementation.tcl
 ### Convert from Bitstream File to Binary File
 
 ```
-shell$ tools/fpga-bit-to-bin.py --flip project/project.run/impl_1/design_1_wrapper.bit pump_axi4.bin
+shell$ python3 tools/fpga-bit-to-bin.py --flip project/project.runs/impl_1/design_1_wrapper.bit pump_axi4.bin
 ```
