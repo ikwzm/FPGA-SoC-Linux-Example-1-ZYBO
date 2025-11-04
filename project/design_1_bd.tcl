@@ -16,6 +16,7 @@ array set available_vivado_version_list {"2016.4"   "ok"}
 array set available_vivado_version_list {"2017.1"   "ok"}
 array set available_vivado_version_list {"2017.2"   "ok"}
 array set available_vivado_version_list {"2017.2.1" "ok"}
+array set available_vivado_version_list {"2025.1"   "ok"}
 set available_vivado_version [array names available_vivado_version_list]
 set current_vivado_version   [version -short]
 
@@ -135,9 +136,29 @@ proc create_root_design { parentCell } {
   current_bd_instance $parentObj
 
 
-  # Create interface ports
-  set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
-  set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
+  # Create instance: processing_system7_0, and set properties
+  if { [string equal "2014.2"  [version -short] ] == 1 } {
+    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.4 processing_system7_0 ]
+  } else {
+    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
+  }
+  if { [string equal [get_property "board_part" [current_project]] ""] == 0 } {
+     puts "INFO: apply_bd_automation -rule xilinx.com:bd_rule:processing_system7"
+     apply_bd_automation -rule "xilinx.com:bd_rule:processing_system7" -config {make_external "FIXED_IO, DDR" apply_board_preset "1" Master "Disable" Slave "Disable" } $processing_system7_0
+     set_property -dict [ list CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
+  } else {
+     puts "INFO: import_board_preset ZYBO_zynq_def.xml"
+     set import_board_preset [file join [file dirname [info script]] "ZYBO_zynq_def.xml"]
+     if { [file exists $import_board_preset] == 0 } {
+        puts "ERROR: Can not Read board preset file = $import_board_preset."
+        return 1
+     }
+     set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
+     set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
+     set_property -dict [ list CONFIG.PCW_IMPORT_BOARD_PRESET $import_board_preset CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_USE_S_AXI_ACP {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
+     connect_bd_intf_net -intf_net processing_system7_0_DDR      [get_bd_intf_ports DDR]      [get_bd_intf_pins processing_system7_0/DDR]
+     connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
+  }
 
   # Create ports
   set LED [ create_bd_port -dir O -from 3 -to 0 LED ]
@@ -155,38 +176,14 @@ proc create_root_design { parentCell } {
   # Create instance: proc_sys_reset_0, and set properties
   set proc_sys_reset_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_0 ]
 
-  # 
-  set import_board_preset [file join [file dirname [info script]] "ZYBO_zynq_def.xml"]
-
-  # Create instance: processing_system7_0, and set properties
-  if { [string equal "2014.2"  [version -short] ] == 1 } {
-    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.4 processing_system7_0 ]
-    set_property -dict [ list CONFIG.PCW_IMPORT_BOARD_PRESET $import_board_preset CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_USE_S_AXI_ACP {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
-  }
-  if { [string match "2014.[34]*" [version -short] ] == 1 } {
-    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-    set_property -dict [ list CONFIG.PCW_IMPORT_BOARD_PRESET $import_board_preset CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_USE_S_AXI_ACP {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
-  }
-  if { [string match "201[56].[1234]*" [version -short] ] == 1 } {
-    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-    set_property -dict [ list CONFIG.PCW_IMPORT_BOARD_PRESET $import_board_preset CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_USE_S_AXI_ACP {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
-  }
-
-  if { [string match "2017.[12]*" [version -short] ] == 1 } {
-    set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-    set_property -dict [ list CONFIG.PCW_IMPORT_BOARD_PRESET $import_board_preset CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_USE_S_AXI_ACP {1} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {125.0} ] $processing_system7_0
-  }
-
   # Create instance: pump_axi3_to_axi3_0, and set properties
-  set pump_axi3_to_axi3_0 [ create_bd_cell -type ip -vlnv ikwzm:pipework:pump_axi3_to_axi3_v1_0:1.0 pump_axi3_to_axi3_0 ]
+  set pump_axi3_to_axi3_0 [ create_bd_cell -type ip -vlnv ikwzm:pipework:pump_axi3_to_axi3:2.4 pump_axi3_to_axi3_0 ]
   set_property -dict [ list CONFIG.BUF_DEPTH {8} CONFIG.C_ADDR_WIDTH {12} CONFIG.C_ID_WIDTH {12} CONFIG.I_AUSER_WIDTH {5} CONFIG.I_DATA_WIDTH {64} CONFIG.I_ID_WIDTH {1} CONFIG.I_MAX_XFER_SIZE {7} CONFIG.M_AUSER_WIDTH {5} CONFIG.M_AXI_ID {0} CONFIG.M_DATA_WIDTH {64} CONFIG.M_ID_WIDTH {1} CONFIG.O_AUSER_WIDTH {5} CONFIG.O_AXI_ID {1} CONFIG.O_DATA_WIDTH {64} CONFIG.O_ID_WIDTH {1} CONFIG.O_MAX_XFER_SIZE {7}  ] $pump_axi3_to_axi3_0
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins LED4_AXI_0/CSR] [get_bd_intf_pins axi_interconnect_csr/M00_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI1 [get_bd_intf_pins axi_interconnect_acp/M00_AXI] [get_bd_intf_pins processing_system7_0/S_AXI_ACP]
   connect_bd_intf_net -intf_net axi_interconnect_0_M01_AXI [get_bd_intf_pins axi_interconnect_csr/M01_AXI] [get_bd_intf_pins pump_axi3_to_axi3_0/CSR]
-  connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
-  connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
   connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins axi_interconnect_csr/S00_AXI] [get_bd_intf_pins processing_system7_0/M_AXI_GP0]
   connect_bd_intf_net -intf_net pump_axi3_to_axi3_0_FETCH [get_bd_intf_pins axi_interconnect_acp/S01_AXI] [get_bd_intf_pins pump_axi3_to_axi3_0/FETCH]
   connect_bd_intf_net -intf_net pump_axi3_to_axi3_0_INTAKE [get_bd_intf_pins axi_interconnect_acp/S00_AXI] [get_bd_intf_pins pump_axi3_to_axi3_0/INTAKE]
