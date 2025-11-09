@@ -17,6 +17,7 @@ array set available_vivado_version_list {"2017.1"   "ok"}
 array set available_vivado_version_list {"2017.2"   "ok"}
 array set available_vivado_version_list {"2017.2.1" "ok"}
 array set available_vivado_version_list {"2025.1"   "ok"}
+array set available_vivado_version_list {"2025.1.1" "ok"}
 set available_vivado_version [array names available_vivado_version_list]
 set current_vivado_version   [version -short]
 

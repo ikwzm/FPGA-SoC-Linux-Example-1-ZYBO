@@ -131,7 +131,7 @@ dtbocfg.rb --remove uio_irq_sample
 
 ### Requirement
 
-* Vivado 2016.1 or 2016.2 or 2016.2.1 or 2025.1
+* Vivado 2016.1 or 2016.2 or 2016.2.1 or 2025.1 or 2025.1.1
 
 ### Download FPGA-SoC-Linux-Example-1-Base
 
